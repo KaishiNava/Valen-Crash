@@ -3,24 +3,24 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
-  Activity, ArrowUpRight, AudioLines, Check, ChevronRight, CircleUserRound,
-  Command, Gauge, LayoutDashboard, Menu, Moon, Settings2, Shield, SlidersHorizontal,
-  Sparkles, Terminal, Wrench, X, Clock3, Globe2, LockKeyhole, Play, Pause, ExternalLink
+  ArrowUpRight, Check, ChevronRight, CircleUserRound, LayoutDashboard, Settings2, Shield,
+  Sparkles, Wrench, X, Clock3, Globe2, LockKeyhole, Music2
 } from "lucide-react";
 
 type Section = "dashboard" | "bug" | "tools" | "profile";
+// Set media assets here once; the settings modal intentionally does not expose video URLs.
+const BANNER_VIDEO_URL = "https://zfile.web.id/B659apX.mp4"; // Example: "/media/banner.mp4" — video only, 16:9, loops automatically.
+const BACKGROUND_VIDEO_URL = "https://zfile.web.id/km2Znat.mp4"; // Example: "/media/background.mp4" — loops muted behind the page.
+const BACKGROUND_MUSIC_URL = "https://zfile.web.id/pDD7b8u.mp3"; // Example: "/media/ambient.mp3" — set this to enable music.
+
 type SiteSettings = {
-  bannerUrl: string;
-  backgroundUrl: string;
-  tickerText: string;
   showEffects: boolean;
+  musicEnabled: boolean;
 };
 
 const defaults: SiteSettings = {
-  bannerUrl: "",
-  backgroundUrl: "",
-  tickerText: "Selamat datang di Valen Crash By KyZX Devs",
-  showEffects: true
+  showEffects: true,
+  musicEnabled: false
 };
 
 const navItems: { id: Section; label: string; hint: string; icon: typeof LayoutDashboard }[] = [
@@ -93,7 +93,8 @@ export default function ValenDashboard() {
     <main className={`app-shell ${settings.showEffects ? "effects-on" : "effects-off"}`}>
       <div className="ambient ambient-one" />
       <div className="ambient ambient-two" />
-      <VideoLayer src={settings.backgroundUrl} className="background-video" />
+      <VideoLayer src={BACKGROUND_VIDEO_URL} className="background-video" />
+      {settings.musicEnabled && BACKGROUND_MUSIC_URL && <audio className="background-music" src={BACKGROUND_MUSIC_URL} autoPlay loop /> }
       <div className="background-scrim" />
 
       <div className="page-wrap">
@@ -110,31 +111,15 @@ export default function ValenDashboard() {
           </button>
         </header>
 
-        <section className="hero-banner" aria-label="Banner video">
-          {settings.bannerUrl ? (
-            <VideoLayer src={settings.bannerUrl} className="banner-video" />
-          ) : (
-            <div className="banner-placeholder">
-              <div className="banner-orbit orbit-a" />
-              <div className="banner-orbit orbit-b" />
-              <div className="banner-sigil"><BrandMark /></div>
-              <div className="banner-copy">
-                <span className="eyebrow"><span className="status-dot" /> SYSTEM ONLINE</span>
-                <h1>ENTER THE <em>UNKNOWN.</em></h1>
-                <p>VALEN CRASH <span>/</span> KYZX DEVS</p>
-              </div>
-              <div className="banner-index">VC—001<br /><span>SECURE CONSOLE</span></div>
-            </div>
-          )}
-          <div className="banner-shade" />
-          <div className="banner-badge"><AudioLines size={12} /> VISUAL FEED <span>16:9</span></div>
+        <section className="hero-banner hero-banner-video-only" aria-label="Banner video">
+          <VideoLayer src={BANNER_VIDEO_URL} className="banner-video" />
         </section>
 
-        <div className="ticker" aria-label={settings.tickerText}>
+        <div className="ticker" aria-label="Selamat datang di Valen Crash By KyZX Devs">
           <div className={`ticker-track ${reducedMotion ? "ticker-static" : ""}`}>
             {[0, 1, 2, 3].map((item) => (
               <span className="ticker-item" key={item}>
-                <span className="ticker-star">✳</span>{settings.tickerText}<span className="ticker-divider">/</span>
+                <span className="ticker-star">✳</span>Selamat datang di Valen Crash By KyZX Devs<span className="ticker-divider">/</span>
               </span>
             ))}
           </div>
@@ -149,7 +134,7 @@ export default function ValenDashboard() {
             exit={reducedMotion ? undefined : { opacity: 0, y: -5 }}
             transition={{ duration: 0.22 }}
           >
-            {section === "dashboard" && <DashboardContent onNavigate={changeSection} />}
+            {section === "dashboard" && <DashboardContent />}
             {section === "bug" && <BugContent />}
             {section === "tools" && <ToolsContent />}
             {section === "profile" && <ProfileContent />}
@@ -244,13 +229,12 @@ export default function ValenDashboard() {
                 </div>
                 <button className="icon-button" onClick={() => setSettingsOpen(false)} aria-label="Tutup pengaturan"><X size={18} /></button>
               </div>
-              <p className="modal-description">Atur visual Valen Crash untuk browser ini. Perubahan disimpan secara lokal.</p>
-              <label className="field-label">Banner video URL <span>16:9 recommended</span></label>
-              <input className="text-input" type="url" placeholder="https://domain.com/banner.mp4" value={draft.bannerUrl} onChange={(e) => setDraft({ ...draft, bannerUrl: e.target.value })} />
-              <label className="field-label">Background video URL <span>Looping background</span></label>
-              <input className="text-input" type="url" placeholder="https://domain.com/background.mp4" value={draft.backgroundUrl} onChange={(e) => setDraft({ ...draft, backgroundUrl: e.target.value })} />
-              <label className="field-label">Running text</label>
-              <input className="text-input" maxLength={120} value={draft.tickerText} onChange={(e) => setDraft({ ...draft, tickerText: e.target.value })} />
+              <p className="modal-description">Atur pengalaman web. URL banner, background, dan musik dikelola langsung dari konstanta di script agar tampilan tetap konsisten.</p>
+              <div className="settings-info-row"><span className="settings-info-icon"><Music2 size={17} /></span><span><b>Musik latar</b><small>{BACKGROUND_MUSIC_URL ? "Musik siap digunakan" : "Tambahkan BACKGROUND_MUSIC_URL di script terlebih dahulu"}</small></span><span className={`status-pill ${BACKGROUND_MUSIC_URL ? "status-ready" : ""}`}>{BACKGROUND_MUSIC_URL ? "READY" : "NOT SET"}</span></div>
+              <button className={`setting-toggle ${draft.musicEnabled ? "toggle-on" : ""}`} disabled={!BACKGROUND_MUSIC_URL} onClick={() => setDraft({ ...draft, musicEnabled: !draft.musicEnabled })}>
+                <span><Music2 size={16} /> Musik latar <small>Putar atau matikan musik ambient</small></span>
+                <span className="toggle-track"><span /></span>
+              </button>
               <button className={`setting-toggle ${draft.showEffects ? "toggle-on" : ""}`} onClick={() => setDraft({ ...draft, showEffects: !draft.showEffects })}>
                 <span><Sparkles size={16} /> Efek visual <small>Glow dan ambient lighting</small></span>
                 <span className="toggle-track"><span /></span>
@@ -260,7 +244,7 @@ export default function ValenDashboard() {
                 <button className="button-primary" onClick={saveSettings}><Check size={16} /> Simpan pengaturan</button>
               </div>
               {saved && <p className="save-confirmation"><Check size={14} /> Pengaturan berhasil disimpan di browser ini.</p>}
-              <p className="settings-note">URL video diterapkan di browser ini saja. Untuk pengaturan global semua akun, sambungkan ke API/backend dengan hak akses admin.</p>
+              <p className="settings-note">Video banner dan background disetel di konstanta script. Musik memerlukan interaksi pengguna pada beberapa browser mobile sebelum dapat diputar.</p>
             </motion.section>
           </motion.div>
         )}
@@ -278,7 +262,7 @@ function SectionHeading({ eyebrow, title, description }: { eyebrow: string; titl
   );
 }
 
-function DashboardContent({ onNavigate }: { onNavigate: (section: Section) => void }) {
+function DashboardContent() {
   return (
     <>
       <div className="welcome-row">
@@ -297,20 +281,7 @@ function DashboardContent({ onNavigate }: { onNavigate: (section: Section) => vo
         <StatCard icon={Clock3} label="Expiration" value="—" meta="Belum ada data akun" />
       </div>
 
-      <div className="section-heading compact-heading">
-        <div><span className="eyebrow">QUICK ACCESS</span><h2>Navigate system</h2></div>
-        <span className="section-counter">01 / 04</span>
-      </div>
-      <div className="quick-grid">
-        <QuickCard icon={Shield} number="01" title="Bug Menu" description="Area pengujian yang berizin." onClick={() => onNavigate("bug")} />
-        <QuickCard icon={Wrench} number="02" title="Tools Menu" description="Utilitas dan alat pendukung." onClick={() => onNavigate("tools")} />
-        <QuickCard icon={CircleUserRound} number="03" title="Profil" description="Informasi akun dan bio." onClick={() => onNavigate("profile")} />
-      </div>
-      <div className="notice-card">
-        <div className="notice-icon"><Activity size={18} /></div>
-        <div><b>System overview</b><p>Ini adalah UI awal. Statistik dan status akan menampilkan data nyata setelah backend akun dipasang.</p></div>
-        <span className="notice-tag">PREVIEW</span>
-      </div>
+
     </>
   );
 }

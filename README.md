@@ -34,3 +34,10 @@ This is the initial frontend/UI starter, not a production authentication system.
 
 ## Suggested next stage
 Add backend auth + expiration checks, database-backed sender ownership, admin-only global sender configuration, task history, and authenticated Telegram bot job delivery for permitted test jobs.
+
+
+## V2 visual configuration
+
+Set media URLs in `src/components/ValenDashboard.tsx` constants: `BANNER_VIDEO_URL`, `BACKGROUND_VIDEO_URL`, and `BACKGROUND_MUSIC_URL`. Banner/background videos loop automatically and are not editable in the settings modal, so the page stays visually consistent. The settings modal now only controls background music on/off and visual effects. Music is disabled until `BACKGROUND_MUSIC_URL` is set. Some mobile browsers require a user gesture before audio can play.
+
+Dashboard quick-access cards and the preview notice were removed because the floating bottom navigation already provides those routes.
