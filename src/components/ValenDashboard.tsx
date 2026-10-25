@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowUpRight, Check, ChevronRight, CircleUserRound, LayoutDashboard, Settings2, Shield,
-  Sparkles, Wrench, X, Clock3, Globe2, LockKeyhole, Music2
+  Sparkles, Wrench, X, Clock3, Globe2, LockKeyhole, Music2, Play
 } from "lucide-react";
 
 type Section = "dashboard" | "bug" | "tools" | "profile";
