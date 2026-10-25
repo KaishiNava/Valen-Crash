@@ -269,3 +269,21 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .dock-center-button:before{content:"";position:absolute;inset:4px;border:1px solid rgba(255,255,255,.07);border-radius:12px;pointer-events:none}
 .dock-center-button:hover{transform:translateX(-50%) translateY(-2px);border-color:rgba(255,120,128,.85)}
 @media(max-width:420px){.floating-dock{max-width:calc(100vw - 28px);gap:2px;padding:5px}.dock-item{padding:8px 2px;gap:5px}.dock-label{font-size:7px}.dock-icon{width:22px}.dock-item .dock-icon svg{width:17px;height:17px}.dock-center-button{width:46px;height:46px;border-radius:16px}}
+
+/* V6 mobile dock fix: keep all navigation buttons centered inside the viewport. */
+.floating-dock-zone{left:0!important;right:0!important;width:100%!important;max-width:none!important;overflow:visible;}
+.floating-dock{left:16px!important;right:16px!important;width:auto!important;max-width:none!important;box-sizing:border-box;transform:none!important;justify-content:space-between;gap:4px;padding:6px 8px;}
+.dock-slot{flex:1 1 0;min-width:0;}
+.dock-item{width:100%;min-width:0;box-sizing:border-box;padding-left:2px;padding-right:2px;}
+.dock-label{font-size:clamp(7px,2.25vw,9px);}
+.dock-center-button{left:calc(50% - 24px)!important;transform:none!important;}
+.dock-center-button:hover{transform:translateY(-2px)!important;}
+.floating-logo-button .brand-mark{display:grid;place-items:center;overflow:visible;}
+.floating-logo-button .brand-monogram{width:1.55em;height:1.2em;font-size:25px;line-height:1;transform:none;}
+.floating-logo-button .brand-monogram>span{right:-.02em;bottom:-.18em;font-size:.72em;}
+@media(max-width:420px){
+ .floating-dock{left:12px!important;right:12px!important;padding:5px 6px;gap:2px;}
+ .dock-item{padding:8px 1px;}
+ .dock-label{font-size:7px;letter-spacing:-.15px;}
+ .dock-center-button{left:calc(50% - 23px)!important;width:46px;height:46px;}
+}
