@@ -38,3 +38,14 @@ Valen Crash is a Next.js dashboard with a responsive, centered bottom navigation
 - GitHub Contents API is a simple JSON-backed store for testing/small projects, not a high-concurrency database. Simultaneous registrations can conflict; retry if prompted.
 - If GitHub settings are missing or incorrect, registration/login will show a setup error until the environment variables and token permissions are fixed.
 - The dashboard's testing console is a safe UI demo and does not perform external actions.
+
+## V4 UI/auth updates
+
+- Floating navigation is centered and the close (X) control is raised between Bug Menu and Tools Menu when the dock is open.
+- The VC monogram alignment has been corrected.
+- Dashboard `Status akun / Role` now displays the signed-in user's actual role.
+- The `Expired` card displays the account expiration date; Owner accounts without `expiresAt` are shown as `UNLIMITED`.
+- New self-registered accounts receive the `user` role and a 7-day `expiresAt` value. Registration still requires valid GitHub repository credentials with Contents read/write permission.
+- `database/users.owner.example.json` is a one-account Owner database. For that file, username is `owner` and password is `ValenOwner-876b5d54fd17b28e!`. Replace `database/users.json` in your private data repository with its contents if you want to use this Owner login.
+
+Note: the application source was updated and the ZIP archive was checked for integrity, but a full Next.js production build was not run in this environment because dependencies are not installed here.

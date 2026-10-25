@@ -1,6 +1,6 @@
 import { createHmac, randomBytes, scryptSync, timingSafeEqual } from "node:crypto";
 
-export type UserRecord = { id: string; username: string; displayName: string; passwordHash: string; role: string; createdAt: string };
+export type UserRecord = { id: string; username: string; displayName: string; passwordHash: string; role: string; createdAt: string; expiresAt?: string | null };
 const cookieName = "valen_session";
 const secret = process.env.SESSION_SECRET;
 export { cookieName };
@@ -21,7 +21,7 @@ function sign(payload: string) {
   if (!secret || secret.length < 32) throw new Error("SESSION_SECRET harus diatur minimal 32 karakter.");
   return createHmac("sha256", secret).update(payload).digest("base64url");
 }
-export function createSession(user: Pick<UserRecord, "id" | "username" | "role">) {
+export function createSession(user: Pick<UserRecord, "id" | "username" | "role"> & { expiresAt?: string | null }) {
   const payload = Buffer.from(JSON.stringify({ ...user, exp: Date.now() + 1000 * 60 * 60 * 24 * 7 })).toString("base64url");
   return `${payload}.${sign(payload)}`;
 }
@@ -35,7 +35,7 @@ export function readSession(token?: string) {
     if (expected.length !== actual.length || !timingSafeEqual(expected, actual)) return null;
     const data = JSON.parse(Buffer.from(payload, "base64url").toString());
     if (!data.exp || data.exp < Date.now()) return null;
-    return { id: String(data.id), username: String(data.username), role: String(data.role) };
+    return { id: String(data.id), username: String(data.username), role: String(data.role), expiresAt: data.expiresAt ? String(data.expiresAt) : null };
   } catch { return null; }
 }
 export function cookieOptions() {

@@ -1,0 +1,12 @@
+{
+  "users": [
+    {
+      "id": "b9bc6e84-ec5f-4be0-bbb4-eba7eebf5120",
+      "username": "owner",
+      "displayName": "Valen Owner",
+      "passwordHash": "5b7ce6ebc04ac5dc24a4cdb06080ed2f:246446d039bbb995fc1c06fabc4f0b5ef0f2a486e3e47d969238e74d113433fcee247fbbbe53766f56a6a97bd9d0303d457e5d30592a1ead0b7ee935e3b1ea88",
+      "role": "owner",
+      "createdAt": "2026-10-25T09:27:51.087Z"
+    }
+  ]
+}

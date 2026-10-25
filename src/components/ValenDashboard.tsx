@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 
 type Section = "dashboard" | "bug" | "tools" | "profile";
+type AuthUser = { id: string; username: string; role: string; expiresAt?: string | null };
 // Set media assets here once; the settings modal intentionally does not expose video URLs.
 const BANNER_VIDEO_URL = "https://zfile.web.id/B659apX.mp4"; // Example: "/media/banner.mp4" — video only, 16:9, loops automatically.
 const BACKGROUND_VIDEO_URL = "https://zfile.web.id/km2Znat.mp4"; // Example: "/media/background.mp4" — loops muted behind the page.
@@ -53,7 +54,7 @@ export default function ValenDashboard() {
   const [saved, setSaved] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [authChecking, setAuthChecking] = useState(true);
-  const [authUser, setAuthUser] = useState<{ id: string; username: string; role: string } | null>(null);
+  const [authUser, setAuthUser] = useState<AuthUser | null>(null);
 
   useEffect(() => {
     fetch("/api/auth/me", { cache: "no-store" }).then(async response => {
@@ -148,7 +149,7 @@ export default function ValenDashboard() {
             exit={reducedMotion ? undefined : { opacity: 0, y: -5 }}
             transition={{ duration: 0.22 }}
           >
-            {section === "dashboard" && <DashboardContent />}
+            {section === "dashboard" && <DashboardContent user={authUser} />}
             {section === "bug" && <BugContent />}
             {section === "tools" && <ToolsContent />}
             {section === "profile" && <ProfileContent user={authUser} />}
@@ -184,20 +185,32 @@ export default function ValenDashboard() {
                 {navItems.map((item, index) => {
                   const Icon = item.icon;
                   return (
-                    <motion.button
-                      key={item.id}
-                      className={`dock-item ${section === item.id ? "dock-item-active" : ""}`}
-                      onClick={() => changeSection(item.id)}
-                      aria-label={item.label}
-                      title={item.label}
-                      initial={reducedMotion ? false : { opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.045 }}
-                    >
-                      <span className="dock-icon"><Icon size={19} strokeWidth={1.8} /></span>
-                      <span className="dock-label">{item.label}</span>
-                      {section === item.id && <span className="dock-active-dot" />}
-                    </motion.button>
+                    <span className="dock-slot" key={item.id}>
+                      <motion.button
+                        className={`dock-item ${section === item.id ? "dock-item-active" : ""}`}
+                        onClick={() => changeSection(item.id)}
+                        aria-label={item.label}
+                        title={item.label}
+                        initial={reducedMotion ? false : { opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.045 }}
+                      >
+                        <span className="dock-icon"><Icon size={19} strokeWidth={1.8} /></span>
+                        <span className="dock-label">{item.label}</span>
+                        {section === item.id && <span className="dock-active-dot" />}
+                      </motion.button>
+                      {item.id === "bug" && (
+                        <motion.button
+                          className="dock-center-button"
+                          onClick={() => setDockOpen(false)}
+                          aria-label="Tutup menu navigasi"
+                          title="Tutup menu"
+                          initial={reducedMotion ? false : { opacity: 0, scale: .8 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ delay: .09 }}
+                        ><X size={23} strokeWidth={1.8} /></motion.button>
+                      )}
+                    </span>
                   );
                 })}
               </motion.nav>
@@ -205,7 +218,7 @@ export default function ValenDashboard() {
           )}
         </AnimatePresence>
         <motion.button
-          className={`floating-logo-button ${dockOpen ? "floating-logo-open" : ""}`}
+          className={`floating-logo-button ${dockOpen ? "floating-logo-open floating-logo-hidden" : ""}`}
           onClick={() => setDockOpen((open) => !open)}
           aria-label={dockOpen ? "Tutup menu" : "Buka menu"}
           aria-expanded={dockOpen}
@@ -276,7 +289,7 @@ function SectionHeading({ eyebrow, title, description }: { eyebrow: string; titl
   );
 }
 
-function DashboardContent() {
+function DashboardContent({ user }: { user: AuthUser | null }) {
   return (
     <>
       <div className="welcome-row">
@@ -291,13 +304,32 @@ function DashboardContent() {
       <div className="stats-grid">
         <StatCard icon={Globe2} label="Global sender" value="—" meta="Belum terhubung" />
         <StatCard icon={LockKeyhole} label="Private sender" value="—" meta="Belum terhubung" />
-        <StatCard icon={Shield} label="Account status" value="DEMO" meta="Mode tampilan awal" status />
-        <StatCard icon={Clock3} label="Expiration" value="—" meta="Belum ada data akun" />
+        <StatCard icon={Shield} label="Status akun / Role" value={(user?.role || "user").toUpperCase()} meta={user?.role?.toLowerCase() === "owner" ? "Akses Owner" : "Akun terautentikasi"} status />
+        <StatCard icon={Clock3} label="Expired" value={formatExpiry(user)} meta={expiryMeta(user)} />
       </div>
 
 
     </>
   );
+}
+
+function formatExpiry(user: AuthUser | null) {
+  if (!user) return "—";
+  if (user.role.toLowerCase() === "owner" && !user.expiresAt) return "UNLIMITED";
+  if (!user.expiresAt) return "BELUM DIATUR";
+  const date = new Date(user.expiresAt);
+  if (Number.isNaN(date.getTime())) return "BELUM DIATUR";
+  return date.getTime() <= Date.now() ? "EXPIRED" : date.toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" });
+}
+function expiryMeta(user: AuthUser | null) {
+  if (!user) return "Memuat data akun";
+  if (user.role.toLowerCase() === "owner" && !user.expiresAt) return "Tidak memiliki batas waktu";
+  if (!user.expiresAt) return "Tanggal kedaluwarsa belum disetel";
+  const time = new Date(user.expiresAt).getTime();
+  if (!Number.isFinite(time)) return "Tanggal kedaluwarsa tidak valid";
+  if (time <= Date.now()) return "Akun telah kedaluwarsa";
+  const days = Math.ceil((time - Date.now()) / 86400000);
+  return `Sisa ${days} hari`;
 }
 
 function StatCard({ icon: Icon, label, value, meta, status = false }: { icon: typeof Globe2; label: string; value: string; meta: string; status?: boolean }) {
@@ -381,7 +413,7 @@ function ToolsContent() {
   );
 }
 
-function ProfileContent({ user }: { user: { id: string; username: string; role: string } }) {
+function ProfileContent({ user }: { user: AuthUser }) {
   const [displayName, setDisplayName] = useState(user.username);
   const [bio, setBio] = useState("Exploring the unknown.");
   const [saved, setSaved] = useState(false);
@@ -416,7 +448,7 @@ function ProfileContent({ user }: { user: { id: string; username: string; role: 
           <input id="display-name" className="text-input" value={displayName} maxLength={32} onChange={(e) => { setDisplayName(e.target.value); setSaved(false); }} />
           <label className="field-label" htmlFor="bio">Bio</label>
           <textarea id="bio" className="text-input bio-input" value={bio} maxLength={160} onChange={(e) => { setBio(e.target.value); setSaved(false); }} />
-          <div className="profile-meta-grid"><div><span>ACCOUNT STATUS</span><b>ACTIVE</b></div><div><span>EXPIRES</span><b>SESSION 7D</b></div><div><span>USER ID</span><b>{user.id.slice(0, 8)}</b></div></div>
+          <div className="profile-meta-grid"><div><span>ACCOUNT STATUS</span><b>ACTIVE</b></div><div><span>EXPIRES</span><b>{formatExpiry(user)}</b></div><div><span>USER ID</span><b>{user.id.slice(0, 8)}</b></div></div>
           <button className="button-primary" type="submit"><Check size={16} /> Simpan profil lokal</button>
           {saved && <p className="save-confirmation"><Check size={14} /> Profil tersimpan di browser ini.</p>}
         </div>

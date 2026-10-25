@@ -237,3 +237,16 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .auth-copyright{position:absolute;bottom:19px;color:#62585b;font:8px var(--mono);letter-spacing:1.3px}.auth-copyright span{color:#a53b44;padding:0 6px}
 .auth-loading{min-height:100svh;display:flex;align-items:center;justify-content:center;gap:13px;background:#080808;color:#bdb1b3;font-size:12px}
 @media(max-width:420px){.floating-dock{max-width:calc(100vw - 24px);padding:5px}.dock-item{padding:9px 3px;border-radius:12px}.dock-label{font-size:7px}.dock-icon{width:24px}.auth-card{padding:22px 19px}.auth-brand{margin-bottom:28px}}
+
+/* V4 polish: center the close control between Bug and Tools, enlarge the dock hub, and align VC monogram. */
+.brand-monogram{display:inline-flex;align-items:center;justify-content:center;gap:0;line-height:1;letter-spacing:-4px;white-space:nowrap;transform:translateX(-1px)}
+.brand-monogram span{display:inline-block;position:relative;line-height:1;margin-left:0;transform:translateY(1px);letter-spacing:-3px}
+.floating-dock-zone{width:max-content;max-width:calc(100vw - 18px);height:auto}
+.floating-dock{bottom:0;gap:3px;align-items:center;left:50%;right:auto;transform:translateX(-50%);max-width:calc(100vw - 18px);padding:7px}
+.dock-slot{position:relative;display:flex;align-items:center;justify-content:center;min-width:0}
+.dock-center-button{position:relative;z-index:5;width:51px;height:51px;flex:0 0 51px;display:grid;place-items:center;margin:-17px 3px 0;border:1px solid rgba(236,103,111,.55);border-radius:18px;background:linear-gradient(145deg,#302527,#0b0a0b);color:#f2dfe1;box-shadow:0 8px 22px rgba(0,0,0,.55),0 0 24px rgba(156,29,39,.24),inset 0 1px 0 rgba(255,255,255,.12);cursor:pointer;transition:transform .2s,border-color .2s,box-shadow .2s}
+.dock-center-button:before{content:"";position:absolute;inset:4px;border:1px solid rgba(255,255,255,.07);border-radius:13px;pointer-events:none}
+.dock-center-button:hover{transform:translateY(-2px);border-color:rgba(255,120,128,.85);box-shadow:0 10px 27px rgba(0,0,0,.6),0 0 30px rgba(188,37,48,.3)}
+.floating-logo-hidden{display:none!important}
+.dock-item{min-width:clamp(55px,13vw,72px);padding-left:6px;padding-right:6px}
+@media(max-width:420px){.floating-dock{gap:0;padding:5px}.dock-item{min-width:clamp(47px,12.5vw,59px);padding:8px 2px}.dock-label{font-size:7px}.dock-center-button{width:44px;height:44px;flex-basis:44px;margin:-14px 1px 0;border-radius:15px}.dock-center-button:before{border-radius:11px}.dock-icon{width:22px}.dock-item .dock-icon svg{width:17px;height:17px}}

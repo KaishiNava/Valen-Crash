@@ -10,7 +10,7 @@ export async function POST(request: Request) {
     if (!username || !password) return NextResponse.json({ error: "Isi username dan password." }, { status: 400 });
     const user = await findUser(username);
     if (!user || !verifyPassword(password, user.passwordHash)) return NextResponse.json({ error: "Username atau password salah." }, { status: 401 });
-    const response = NextResponse.json({ user: { id: user.id, username: user.username, displayName: user.displayName, role: user.role } });
+    const response = NextResponse.json({ user: { id: user.id, username: user.username, displayName: user.displayName, role: user.role, expiresAt: user.expiresAt ?? null } });
     response.cookies.set("valen_session", createSession(user), cookieOptions());
     return response;
   } catch (error) {
