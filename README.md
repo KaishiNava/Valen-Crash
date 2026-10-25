@@ -55,3 +55,9 @@ Note: the application source was updated and the ZIP archive was checked for int
 - The close (X) control is separate from the four navigation items and sits centered above the dock.
 - `/api/auth/me` now reads the current user record from the configured GitHub JSON database, so role/expiry updates are not stuck in an older session cookie.
 - After deploying this version, log out and log in with the `owner` account. If the dashboard still shows USER, verify that the active session username is `owner` and that the configured GitHub repo/path points to `users.json` containing the record with `"username": "owner"` and `"role": "owner"`.
+
+## Update navigasi dan Telegram bot
+
+Navigasi mobile sekarang tampil langsung di bagian bawah tanpa tombol X atau tombol reveal; Dashboard, Bug Menu, Tools Menu, dan Profil tetap terlihat dan dipusatkan. Monogram VC juga dirapikan tanpa garis dekoratif yang menutupi huruf.
+
+Bot Telegram terpisah ada di folder `telegram-bot/`. Panduan instalasi dan perintah tersedia di `telegram-bot/README.md`. Bot menggunakan penyimpanan lokal yang persisten untuk akun dan sesi WhatsApp; jangan deploy sebagai fungsi serverless.

@@ -1,0 +1,14 @@
+{
+  "name": "valen-database-telegram-bot",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": { "start": "node index.mjs" },
+  "engines": { "node": ">=20.0.0" },
+  "dependencies": {
+    "@whiskeysockets/baileys": "^6.7.18",
+    "bcryptjs": "^2.4.3",
+    "grammy": "^1.35.0",
+    "pino": "^9.6.0"
+  }
+}

@@ -5,3 +5,7 @@ out
 !.env.example
 .DS_Store
 npm-debug.log*
+
+# Telegram bot secrets and WhatsApp credentials
+telegram-bot/.env
+telegram-bot/data/

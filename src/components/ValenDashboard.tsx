@@ -35,7 +35,6 @@ function BrandMark({ small = false }: { small?: boolean }) {
   return (
     <div className={`brand-mark ${small ? "brand-mark-small" : ""}`} aria-label="Valen Crash logo">
       <span className="brand-monogram">V<span>C</span></span>
-      <span className="brand-cut" />
     </div>
   );
 }
@@ -47,7 +46,6 @@ function VideoLayer({ src, className = "" }: { src: string; className?: string }
 
 export default function ValenDashboard() {
   const [section, setSection] = useState<Section>("dashboard");
-  const [dockOpen, setDockOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [settings, setSettings] = useState<SiteSettings>(defaults);
   const [draft, setDraft] = useState<SiteSettings>(defaults);
@@ -83,7 +81,6 @@ export default function ValenDashboard() {
     setDraft(settings);
     setSaved(false);
     setSettingsOpen(true);
-    setDockOpen(false);
   };
 
   const saveSettings = () => {
@@ -98,7 +95,6 @@ export default function ValenDashboard() {
 
   const changeSection = (next: Section) => {
     setSection(next);
-    setDockOpen(false);
   };
 
   if (authChecking || !authUser) return <main className="auth-loading"><div className="auth-logo">V<span>C</span></div><span className="spinner" /> Memverifikasi sesi…</main>;
@@ -162,72 +158,27 @@ export default function ValenDashboard() {
         </footer>
       </div>
 
-      <div className="floating-dock-zone">
-        <AnimatePresence>
-          {dockOpen && (
-            <>
-              <motion.button
-                className="dock-backdrop"
-                aria-label="Tutup menu navigasi"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={() => setDockOpen(false)}
-              />
-              <motion.nav
-                className="floating-dock"
-                aria-label="Navigasi utama"
-                initial={reducedMotion ? false : { opacity: 0, y: 18, scale: 0.92 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={reducedMotion ? undefined : { opacity: 0, y: 12, scale: 0.96 }}
-                transition={{ type: "spring", stiffness: 390, damping: 28 }}
-              >
-                {navItems.map((item, index) => {
-                  const Icon = item.icon;
-                  return (
-                    <span className="dock-slot" key={item.id}>
-                      <motion.button
-                        className={`dock-item ${section === item.id ? "dock-item-active" : ""}`}
-                        onClick={() => changeSection(item.id)}
-                        aria-label={item.label}
-                        title={item.label}
-                        initial={reducedMotion ? false : { opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.045 }}
-                      >
-                        <span className="dock-icon"><Icon size={19} strokeWidth={1.8} /></span>
-                        <span className="dock-label">{item.label}</span>
-                        {section === item.id && <span className="dock-active-dot" />}
-                      </motion.button>
-                    </span>
-                  );
-                })}
-              </motion.nav>
-              <motion.button
-                className="dock-center-button"
-                onClick={() => setDockOpen(false)}
-                aria-label="Tutup menu navigasi"
-                title="Tutup menu"
-                initial={reducedMotion ? false : { opacity: 0, scale: .8, y: 6 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: .8, y: 6 }}
-                transition={{ type: "spring", stiffness: 390, damping: 28 }}
-              ><X size={23} strokeWidth={1.8} /></motion.button>
-            </>
-          )}
-        </AnimatePresence>
-        <motion.button
-          className={`floating-logo-button ${dockOpen ? "floating-logo-open floating-logo-hidden" : ""}`}
-          onClick={() => setDockOpen((open) => !open)}
-          aria-label={dockOpen ? "Tutup menu" : "Buka menu"}
-          aria-expanded={dockOpen}
-          whileTap={reducedMotion ? undefined : { scale: 0.94 }}
-          title="Valen Crash menu"
-        >
-          <span className="logo-button-halo" />
-          {dockOpen ? <X size={22} strokeWidth={1.7} /> : <BrandMark />}
-          <span className="logo-button-pulse" />
-        </motion.button>
+      <div className="floating-dock-zone" aria-label="Navigasi utama">
+        <nav className="floating-dock" aria-label="Navigasi utama">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <span className="dock-slot" key={item.id}>
+                <button
+                  className={`dock-item ${section === item.id ? "dock-item-active" : ""}`}
+                  onClick={() => changeSection(item.id)}
+                  aria-label={item.label}
+                  aria-current={section === item.id ? "page" : undefined}
+                  title={item.label}
+                >
+                  <span className="dock-icon"><Icon size={19} strokeWidth={1.8} /></span>
+                  <span className="dock-label">{item.label}</span>
+                  {section === item.id && <span className="dock-active-dot" />}
+                </button>
+              </span>
+            );
+          })}
+        </nav>
       </div>
 
       <AnimatePresence>

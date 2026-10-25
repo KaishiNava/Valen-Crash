@@ -287,3 +287,17 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
  .dock-label{font-size:7px;letter-spacing:-.15px;}
  .dock-center-button{left:calc(50% - 23px)!important;width:46px;height:46px;}
 }
+
+
+/* V7: permanent, centered mobile navigation; no reveal toggle or floating X. */
+.brand-monogram{display:flex!important;position:relative!important;align-items:center!important;justify-content:center!important;width:auto!important;height:auto!important;gap:0!important;line-height:1!important;letter-spacing:-.12em!important;transform:translateX(-.04em)!important;white-space:nowrap!important;overflow:visible!important}
+.brand-monogram>span{position:relative!important;right:auto!important;bottom:auto!important;margin-left:-.01em!important;font-size:.76em!important;line-height:1!important;transform:translateY(.16em)!important;letter-spacing:-.06em!important;color:#e65b63!important}
+.brand-cut{display:none!important}
+.floating-dock-zone{position:fixed!important;z-index:40!important;left:0!important;right:0!important;bottom:max(12px,env(safe-area-inset-bottom))!important;width:100%!important;height:auto!important;max-width:none!important;transform:none!important;display:flex!important;justify-content:center!important;pointer-events:none!important;padding:0 12px!important;box-sizing:border-box!important}
+.floating-dock{position:relative!important;inset:auto!important;left:auto!important;right:auto!important;bottom:auto!important;transform:none!important;width:min(100%,560px)!important;max-width:560px!important;box-sizing:border-box!important;display:flex!important;justify-content:space-between!important;align-items:stretch!important;gap:4px!important;padding:6px!important;margin:0 auto!important;pointer-events:auto!important}
+.dock-slot{flex:1 1 0!important;min-width:0!important}
+.dock-item{width:100%!important;min-width:0!important;min-height:68px!important;box-sizing:border-box!important;padding:9px 3px!important;gap:5px!important}
+.dock-label{font-size:clamp(8px,2.4vw,10px)!important;white-space:nowrap!important;letter-spacing:0!important}
+.dock-icon{width:28px!important;height:25px!important}
+.floating-logo-button,.dock-center-button,.dock-backdrop{display:none!important}
+@media(max-width:420px){.floating-dock-zone{padding:0 10px!important}.floating-dock{gap:2px!important;padding:5px!important;border-radius:19px!important}.dock-item{min-height:64px!important;padding:8px 1px!important;border-radius:13px!important}.dock-label{font-size:7.5px!important;letter-spacing:-.2px!important}.dock-icon{width:23px!important}.dock-icon svg{width:17px!important;height:17px!important}}
