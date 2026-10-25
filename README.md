@@ -1,43 +1,40 @@
-# Valen Crash V1 — UI Starter
+# Valen Crash — V3
 
-Premium dark-cinematic dashboard starter for **Valen Crash — By KyZX Devs**.
+Valen Crash is a Next.js dashboard with a responsive, centered bottom navigation dock and mandatory login/register before accessing the site.
 
-## Included
-- Next.js + TypeScript
-- Responsive monochrome / dark-crimson UI
-- Custom VC SVG favicon and logo mark
-- 16:9 banner video URL setting
-- Looping background video URL setting
-- Moving welcome ticker
-- Floating bottom-center VC dock with Dashboard, Bug Menu, Tools, Profile
-- Local visual settings and demo profile saved in browser storage
-- Safe testing form demo (does not send messages or run external actions)
+## Features
+- Login and registration page at `/login`.
+- User records stored as JSON in a **separate private GitHub repository**.
+- Passwords are stored as salted scrypt hashes, never as plain text.
+- Signed HTTP-only session cookie, seven-day session lifetime, logout button.
+- Responsive mobile and desktop UI; bottom dock is horizontally centered and fits small screens.
+- Existing dashboard, bug-menu demo, tools menu, settings, banner, and profile UI retained.
 
-## Run locally
-```bash
-npm install
-npm run dev
-```
-Open `http://localhost:3000`.
+## Setup GitHub JSON database
+1. Create a separate **private** GitHub repository, e.g. `valen-crash-data`.
+2. Add a file at `database/users.json` with this content:
+   ```json
+   {
+     "users": []
+   }
+   ```
+3. Create a GitHub token with access to that private data repository and **Contents: Read and write** permission. Keep it server-side; never expose it in browser code.
+4. Copy `.env.example` to `.env.local` and fill in:
+   - `GITHUB_OWNER`: GitHub account/org that owns the data repository.
+   - `GITHUB_REPO`: private data repository name.
+   - `GITHUB_USERS_PATH`: JSON file path, default `database/users.json`.
+   - `GITHUB_TOKEN`: token authorized to read/write the data repository.
+   - `SESSION_SECRET`: random secret of at least 32 characters.
+5. Install and run:
+   ```bash
+   npm install
+   npm run dev
+   ```
+6. Deploy to Vercel and add the same environment variables in Project Settings → Environment Variables, then redeploy.
 
-## Video settings
-Tap the gear icon and enter direct, browser-accessible `.mp4` or compatible video URLs. Settings are saved in this browser's local storage. They are not global settings and are not shared with other users.
-
-## Important limitations
-This is the initial frontend/UI starter, not a production authentication system.
-- Account stats currently show placeholders.
-- Profile is a local demo profile, not a secure user account.
-- The testing form is a UI demonstration only and does not contact Telegram or WhatsApp.
-- `data/users.json` is intentionally not used for password storage in this frontend starter. For real login, use a server-side API, hashed passwords, secure sessions, authorization checks, and a database/private source.
-- Never expose Telegram bot tokens, API secrets, or private sender credentials in browser code or a public GitHub repository.
-- Use messaging integrations only for authorized testing and approved APIs.
-
-## Suggested next stage
-Add backend auth + expiration checks, database-backed sender ownership, admin-only global sender configuration, task history, and authenticated Telegram bot job delivery for permitted test jobs.
-
-
-## V2 visual configuration
-
-Set media URLs in `src/components/ValenDashboard.tsx` constants: `BANNER_VIDEO_URL`, `BACKGROUND_VIDEO_URL`, and `BACKGROUND_MUSIC_URL`. Banner/background videos loop automatically and are not editable in the settings modal, so the page stays visually consistent. The settings modal now only controls background music on/off and visual effects. Music is disabled until `BACKGROUND_MUSIC_URL` is set. Some mobile browsers require a user gesture before audio can play.
-
-Dashboard quick-access cards and the preview notice were removed because the floating bottom navigation already provides those routes.
+## Important notes
+- Do not put the GitHub token in `NEXT_PUBLIC_*` variables or commit `.env.local`.
+- The JSON data repository must be private. A public JSON file exposes account metadata and password hashes.
+- GitHub Contents API is a simple JSON-backed store for testing/small projects, not a high-concurrency database. Simultaneous registrations can conflict; retry if prompted.
+- If GitHub settings are missing or incorrect, registration/login will show a setup error until the environment variables and token permissions are fixed.
+- The dashboard's testing console is a safe UI demo and does not perform external actions.

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
-  ArrowUpRight, Check, ChevronRight, CircleUserRound, LayoutDashboard, Settings2, Shield,
+  ArrowUpRight, Check, ChevronRight, CircleUserRound, LayoutDashboard, Settings2, Shield, LogOut,
   Sparkles, Wrench, X, Clock3, Globe2, LockKeyhole, Music2, Play, Terminal, Gauge, Command
 } from "lucide-react";
 
@@ -52,6 +52,17 @@ export default function ValenDashboard() {
   const [draft, setDraft] = useState<SiteSettings>(defaults);
   const [saved, setSaved] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [authChecking, setAuthChecking] = useState(true);
+  const [authUser, setAuthUser] = useState<{ id: string; username: string; role: string } | null>(null);
+
+  useEffect(() => {
+    fetch("/api/auth/me", { cache: "no-store" }).then(async response => {
+      if (!response.ok) { window.location.replace("/login"); return; }
+      const data = await response.json();
+      setAuthUser(data.user);
+      setAuthChecking(false);
+    }).catch(() => window.location.replace("/login"));
+  }, []);
 
   useEffect(() => {
     try {
@@ -89,6 +100,9 @@ export default function ValenDashboard() {
     setDockOpen(false);
   };
 
+  if (authChecking || !authUser) return <main className="auth-loading"><div className="auth-logo">V<span>C</span></div><span className="spinner" /> Memverifikasi sesi…</main>;
+  const logout = async () => { await fetch("/api/auth/logout", { method: "POST" }); window.location.href = "/login"; };
+
   return (
     <main className={`app-shell ${settings.showEffects ? "effects-on" : "effects-off"}`}>
       <div className="ambient ambient-one" />
@@ -106,9 +120,9 @@ export default function ValenDashboard() {
               <div className="brand-byline"><span className="status-dot" /> BY KYZX DEVS</div>
             </div>
           </div>
-          <button className="icon-button settings-trigger" onClick={openSettings} aria-label="Buka pengaturan" title="Pengaturan">
+          <div className="topbar-actions"><button className="icon-button logout-trigger" onClick={logout} aria-label="Logout" title={`Logout @${authUser.username}`}><LogOut size={17} /></button><button className="icon-button settings-trigger" onClick={openSettings} aria-label="Buka pengaturan" title="Pengaturan">
             <Settings2 size={19} strokeWidth={1.8} />
-          </button>
+          </button></div>
         </header>
 
         <section className="hero-banner hero-banner-video-only" aria-label="Banner video">
@@ -137,7 +151,7 @@ export default function ValenDashboard() {
             {section === "dashboard" && <DashboardContent />}
             {section === "bug" && <BugContent />}
             {section === "tools" && <ToolsContent />}
-            {section === "profile" && <ProfileContent />}
+            {section === "profile" && <ProfileContent user={authUser} />}
           </motion.section>
         </AnimatePresence>
 
@@ -367,8 +381,8 @@ function ToolsContent() {
   );
 }
 
-function ProfileContent() {
-  const [displayName, setDisplayName] = useState("Valen User");
+function ProfileContent({ user }: { user: { id: string; username: string; role: string } }) {
+  const [displayName, setDisplayName] = useState(user.username);
   const [bio, setBio] = useState("Exploring the unknown.");
   const [saved, setSaved] = useState(false);
 
@@ -377,7 +391,7 @@ function ProfileContent() {
       const profile = localStorage.getItem("valen-crash-profile");
       if (profile) {
         const parsed = JSON.parse(profile);
-        setDisplayName(parsed.displayName ?? "Valen User");
+        setDisplayName(parsed.displayName ?? user.username);
         setBio(parsed.bio ?? "Exploring the unknown.");
       }
     } catch { /* use demo profile */ }
@@ -393,16 +407,16 @@ function ProfileContent() {
 
   return (
     <>
-      <SectionHeading eyebrow="IDENTITY FILE" title="Profil" description="Profil demo yang disimpan di browser. Akun dan role sebenarnya memerlukan autentikasi backend." />
+      <SectionHeading eyebrow="IDENTITY FILE" title="Profil" description="Informasi akun yang sedang login. Pengaturan nama dan bio disimpan di browser ini." />
       <form className="profile-panel glass-panel" onSubmit={saveProfile}>
-        <div className="profile-banner"><div className="profile-emblem"><BrandMark /></div><span className="demo-chip">LOCAL PROFILE</span></div>
+        <div className="profile-banner"><div className="profile-emblem"><BrandMark /></div><span className="demo-chip">AUTHENTICATED</span></div>
         <div className="profile-main">
-          <div className="profile-title-row"><div><h3>{displayName || "Valen User"}</h3><p>@demo-user · Valen Crash</p></div><span className="role-pill"><Shield size={13} /> DEMO USER</span></div>
+          <div className="profile-title-row"><div><h3>{displayName || "Valen User"}</h3><p>@{user.username} · Valen Crash</p></div><span className="role-pill"><Shield size={13} /> {user.role.toUpperCase()}</span></div>
           <label className="field-label" htmlFor="display-name">Display name</label>
           <input id="display-name" className="text-input" value={displayName} maxLength={32} onChange={(e) => { setDisplayName(e.target.value); setSaved(false); }} />
           <label className="field-label" htmlFor="bio">Bio</label>
           <textarea id="bio" className="text-input bio-input" value={bio} maxLength={160} onChange={(e) => { setBio(e.target.value); setSaved(false); }} />
-          <div className="profile-meta-grid"><div><span>ACCOUNT STATUS</span><b>DEMO</b></div><div><span>EXPIRES</span><b>NOT SET</b></div><div><span>USER ID</span><b>NOT CONNECTED</b></div></div>
+          <div className="profile-meta-grid"><div><span>ACCOUNT STATUS</span><b>ACTIVE</b></div><div><span>EXPIRES</span><b>SESSION 7D</b></div><div><span>USER ID</span><b>{user.id.slice(0, 8)}</b></div></div>
           <button className="button-primary" type="submit"><Check size={16} /> Simpan profil lokal</button>
           {saved && <p className="save-confirmation"><Check size={14} /> Profil tersimpan di browser ini.</p>}
         </div>
