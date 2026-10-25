@@ -250,3 +250,22 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .floating-logo-hidden{display:none!important}
 .dock-item{min-width:clamp(55px,13vw,72px);padding-left:6px;padding-right:6px}
 @media(max-width:420px){.floating-dock{gap:0;padding:5px}.dock-item{min-width:clamp(47px,12.5vw,59px);padding:8px 2px}.dock-label{font-size:7px}.dock-center-button{width:44px;height:44px;flex-basis:44px;margin:-14px 1px 0;border-radius:15px}.dock-center-button:before{border-radius:11px}.dock-icon{width:22px}.dock-item .dock-icon svg{width:17px;height:17px}}
+
+
+/* V5 layout correction: full viewport anchor, balanced dock, X floats above its exact center. */
+.brand-monogram{display:block;position:relative;width:1.55em;height:1.15em;line-height:1;letter-spacing:0;transform:none;font-size:25px;font-weight:800;font-style:italic}
+.brand-monogram>span{position:absolute;right:-.08em;bottom:-.24em;margin:0;color:#e65b63;line-height:1;letter-spacing:0;font-size:.78em;transform:none;text-shadow:0 1px 8px rgba(220,65,76,.22)}
+.brand-mark-small .brand-monogram{font-size:20px}
+.floating-dock-zone{position:fixed;z-index:40;left:0;right:0;bottom:max(17px,env(safe-area-inset-bottom));width:100%;max-width:none;height:66px;transform:none;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.floating-logo-button{position:absolute;left:50%;bottom:0;transform:translateX(-50%);}
+.floating-logo-button:hover{transform:translateX(-50%)}
+.floating-logo-button:active{transform:translateX(-50%) scale(.96)}
+.floating-logo-hidden{display:none!important}
+.floating-dock{position:absolute;left:50%;right:auto;bottom:0;transform:translateX(-50%);width:min(360px,calc(100vw - 28px));max-width:calc(100vw - 28px);box-sizing:border-box;display:flex;justify-content:center;align-items:stretch;gap:3px;padding:6px;}
+.dock-slot{flex:1 1 0;min-width:0;}
+.dock-item{min-width:0;width:100%;padding:9px clamp(3px,1.2vw,9px);}
+.dock-label{white-space:nowrap;font-size:clamp(7px,2.1vw,9px)}
+.dock-center-button{position:absolute;left:50%;bottom:calc(100% + 12px);transform:translateX(-50%);z-index:6;width:48px;height:48px;display:grid;place-items:center;margin:0;border:1px solid rgba(236,103,111,.65);border-radius:17px;background:linear-gradient(145deg,#302527,#0b0a0b);color:#f2dfe1;box-shadow:0 8px 22px rgba(0,0,0,.55),0 0 24px rgba(156,29,39,.3),inset 0 1px 0 rgba(255,255,255,.12);cursor:pointer;pointer-events:auto;}
+.dock-center-button:before{content:"";position:absolute;inset:4px;border:1px solid rgba(255,255,255,.07);border-radius:12px;pointer-events:none}
+.dock-center-button:hover{transform:translateX(-50%) translateY(-2px);border-color:rgba(255,120,128,.85)}
+@media(max-width:420px){.floating-dock{max-width:calc(100vw - 28px);gap:2px;padding:5px}.dock-item{padding:8px 2px;gap:5px}.dock-label{font-size:7px}.dock-icon{width:22px}.dock-item .dock-icon svg{width:17px;height:17px}.dock-center-button{width:46px;height:46px;border-radius:16px}}

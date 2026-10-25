@@ -49,3 +49,9 @@ Valen Crash is a Next.js dashboard with a responsive, centered bottom navigation
 - `database/users.owner.example.json` is a one-account Owner database. For that file, username is `owner` and password is `ValenOwner-876b5d54fd17b28e!`. Replace `database/users.json` in your private data repository with its contents if you want to use this Owner login.
 
 Note: the application source was updated and the ZIP archive was checked for integrity, but a full Next.js production build was not run in this environment because dependencies are not installed here.
+
+## V5 hotfix (mobile navigation and live role)
+- Floating navigation is anchored to the full viewport and uses a responsive dock, so it stays centered instead of overflowing the right edge.
+- The close (X) control is separate from the four navigation items and sits centered above the dock.
+- `/api/auth/me` now reads the current user record from the configured GitHub JSON database, so role/expiry updates are not stuck in an older session cookie.
+- After deploying this version, log out and log in with the `owner` account. If the dashboard still shows USER, verify that the active session username is `owner` and that the configured GitHub repo/path points to `users.json` containing the record with `"username": "owner"` and `"role": "owner"`.

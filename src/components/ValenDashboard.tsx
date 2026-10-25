@@ -199,21 +199,20 @@ export default function ValenDashboard() {
                         <span className="dock-label">{item.label}</span>
                         {section === item.id && <span className="dock-active-dot" />}
                       </motion.button>
-                      {item.id === "bug" && (
-                        <motion.button
-                          className="dock-center-button"
-                          onClick={() => setDockOpen(false)}
-                          aria-label="Tutup menu navigasi"
-                          title="Tutup menu"
-                          initial={reducedMotion ? false : { opacity: 0, scale: .8 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{ delay: .09 }}
-                        ><X size={23} strokeWidth={1.8} /></motion.button>
-                      )}
                     </span>
                   );
                 })}
               </motion.nav>
+              <motion.button
+                className="dock-center-button"
+                onClick={() => setDockOpen(false)}
+                aria-label="Tutup menu navigasi"
+                title="Tutup menu"
+                initial={reducedMotion ? false : { opacity: 0, scale: .8, y: 6 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: .8, y: 6 }}
+                transition={{ type: "spring", stiffness: 390, damping: 28 }}
+              ><X size={23} strokeWidth={1.8} /></motion.button>
             </>
           )}
         </AnimatePresence>
